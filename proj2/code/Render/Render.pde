@@ -4,6 +4,13 @@ import controlP5.*;
 ControlP5 cp5;
 PeasyCam cam;
 
+//screen size and Z depth
+int scrX = 1680;
+int scrY = 1000;
+int scrZ = 2800; //peasycam Z depth
+
+
+
 float background_color;
 float fillColor;
 
@@ -27,20 +34,31 @@ boolean makeWeave = false;
 
 //PFont arial;
 
-
+// handling data
 Table table;
 int numRows, numColumns;
 ArrayList<Record> record_arrL = new ArrayList<Record>();
 color cCurve = color(0, 0, 0);
 //int ptSize = 4;
 
+
+//----------------------------------------------------------
 void setup(){
   size(1680, 1000, P3D);
-  cam = new PeasyCam(this, 800);
-  // PeasyCam(processing.core.PApplet parent, double lookAtX, double lookAtY, double lookAtZ, double distance)
-  cam.setMinimumDistance(10);
-  cam.setMaximumDistance(5000);
+  smooth(); // anti-aliasing
+  
+  //cam = new PeasyCam(this, 800);
+  // PeasyCam (this, x position, y position, z position, viewing distance)
+  cam = new PeasyCam(this, 150, -80, 100, scrZ);
+  cam.setMinimumDistance(50);
+  cam.setMaximumDistance(scrZ); // max viewing distance
   //println(cam.getLookAt());
+    // Set the angle of view - like changing the lens on a camera PI/2 (wide angle); PI/6 normal lens; PI/12 (telephoto)
+  float fov = PI/2; // field of view try between PI/2 to PI/10
+  float cameraZ = (height/2.0) / tan(PI/6);
+  //perspective(field of view in radians; aspect/ratio of width to height; zNear - Z position of nearest clipping, zFar - Z position of farthest clipping)
+  //default values are : perspective(PI/3.0, width/height, cameraZ/10.0, cameraZ*10.0) where cameraZ is ((height/2.0) / tan(PI*60.0/360.0));
+  perspective(fov, float(width)/float(height), cameraZ/10.0, cameraZ*10.0); // if using 0.001 instead of cameraZ/10.0 so that all things close to the screen can be seen - get noise
   
   cp5 = new ControlP5(this);
   
@@ -71,9 +89,29 @@ void setup(){
   
 }
 
+/**
+* Need to move to GUI
+*/
+void keyPressed(){
+  if (keyCode == '1'){
+    cam.rotateY(-PI/2);
+    
+  }
+  if (key == '0'){
+    cam.rotateY(PI/2);
+  }
+  if (key == '5'){
+    cam.lookAt(150, -80, 1140);
+  }
+}
+
+
+//----------------------------------------------------------
 void draw(){
   background(background_color);
   noFill();
+  
+  //cam.setDistance(camDist);
   
   for (int i = 0; i < record_arrL.size(); i++){
     Record currR = record_arrL.get(i);
@@ -91,9 +129,9 @@ void draw(){
     if (artform.equals("friendship bracelet")){
       cCurve = cGreen;
     }
-    //if (artform.equals("friendship bracelet") || artform.equals("macrame") || artform.equals("amigurumi")){
+    if (artform.equals("friendship bracelet") || artform.equals("macrame") || artform.equals("amigurumi")){
     //if (artform.equals("friendship bracelet") || artform.equals("macrame") || artform.equals("amigurumi") || artform.equals("crochet")){
-    if (artform.equals("crochet")){
+    //if (artform.equals("crochet")){
       makeWeave = true;
     }
     else{
@@ -169,32 +207,32 @@ void draw(){
     circle(0, 0, 100);
   }
   
-  /**
-  /* show underlying geometry frame
-  /*
-  //if (!showSpindle){
-  //  // show spindle geometry
-  //  pushMatrix();
-  //  for (int i = 2005; i <= 2023; i++){
-  //    drawYearDisc(i);
-  //  }
-  //  popMatrix();
-  //}
-  //else {
-  //  // show flat weave geometry
-  //  for (int i = 2005; i <= 2023; i++){
-  //    if (yearAsLine) {
-  //      translate(0, 0, 10);
-  //      drawYearAxis(i);
-  //    }
-  //    else{
-  //      drawYearSquare(i);
-  //      translate(0, 0, 20); // influences data point z position 
-  //    }
+  ///**
+  ///* show underlying geometry frame
+  ///*
+  if (!showSpindle){
+    // show spindle geometry
+    pushMatrix();
+    for (int i = 2005; i <= 2023; i++){
+      drawYearDisc(i);
+    }
+    popMatrix();
+  }
+  else {
+    // show flat weave geometry
+    for (int i = 2005; i <= 2023; i++){
+      if (yearAsLine) {
+        translate(0, 0, 10);
+        drawYearAxis(i);
+      }
+      else{
+        drawYearSquare(i);
+        translate(0, 0, 20); // influences data point z position 
+      }
       
-  //  }
-  //}
-  */
+    }
+  }
+  //*/
 
 
 }
