@@ -107,5 +107,12 @@ class Record{
   String getArtform(){
     return this.artform;
   }
+  
+  /**
+  * Return the artform of this Record
+  */
+  String getTitle(){
+    return this.title;
+  }
 
 }

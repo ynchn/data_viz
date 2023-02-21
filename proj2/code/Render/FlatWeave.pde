@@ -26,7 +26,7 @@ void drawYearSquare(int year){
 // draw days in a month in 1 line
 void drawMonthAxis(int days){
     int incr = 0;
-    stroke(0);
+    stroke(fillColor);
     strokeWeight(2);
     for (int j = 0; j < days; j++){
       point(incr, 0, 0);
