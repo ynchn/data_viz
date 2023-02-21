@@ -10,8 +10,8 @@ int scrY = 1000;
 int scrZ = 2800; //peasycam Z depth
 
 
-float background_color = 100;
-float fillColor = 0;
+float bgColor = 30;
+float fillColor = 140;
 
 PFont yearLabelFont;
 
@@ -24,11 +24,14 @@ color cGreen = #6ADF97;
 color cYellow = #CFE261;
 
 
-// showSpindle - default true - show spindle geometry
-// showSpindle - false - show flat weave geometry
-boolean showSpindle = true;
-// makeWeave - selector for which artform is shown
+//boolean showSpindle = true;
+boolean geometry = true;
+// selectors for which artform is shown
 boolean makeWeave = false;
+boolean showCrochet = false;
+boolean showAmigurumi = false;
+boolean showMacrame = false;
+boolean showFB = false;
 
 // handling data
 Table table;
@@ -86,36 +89,50 @@ void setup(){
 
 //----------------------------------------------------------
 void draw(){
-  background(background_color);
+  background(bgColor);
   noFill();
   frameRate(30);
   
   
   for (int i = 0; i < record_arrL.size(); i++){
+    makeWeave = false;
     Record currR = record_arrL.get(i);
     String artform = currR.getArtform();
     
     if (artform.equals("crochet")){
+      if (showCrochet) {
+        makeWeave = true;
+      }
       cCurve = cPurple;
     }
     if (artform.equals("amigurumi")){
+      if (showAmigurumi){
+        makeWeave = true;
+      }
       cCurve = cBlue;
     }
     if (artform.equals("macrame")){
+      if (showMacrame){
+        makeWeave = true;
+      }
       cCurve = cCyan;
     }
     if (artform.equals("friendship bracelet")){
+      if (showFB){
+        makeWeave = true;
+      }
       cCurve = cGreen;
     }
     //if (artform.equals("friendship bracelet") || artform.equals("macrame") || artform.equals("amigurumi")){
     //if (artform.equals("friendship bracelet") || artform.equals("macrame") || artform.equals("amigurumi") || artform.equals("crochet")){
-    if (artform.equals("macrame")){
-      makeWeave = true;
-    }
-    else{
+    //if (artform.equals("macrame") && macrame){
+    //  makeWeave = true;
+    //}
+    
+    if (!makeWeave) {
       continue;
     }
-    
+
     // Calculate point and curve positions
     // Draw curve of 1 book
     if (makeWeave) {
@@ -148,37 +165,23 @@ void draw(){
       float t_z = (cin_z - cout_z) / 2.0 + cout_z;
       
       drawCurve(cout_x, cout_z, cin_x, cin_z, t_x, t_y, t_z);
-      
     }
-    
-    drawYearLabels();
-    
-    
-    // GUI controls
-    GUI();
-    if ((mouseX < 180) && (mouseY < 180)){
-      cam.setActive(false);
-    }
-    else{
-      cam.setActive(true);
-    }
-    
+
   }
- 
   
-  
+  drawYearLabels();
   ///**
   ///* show underlying geometry frame
   ///*
-  if (!showSpindle){
-    // show spindle geometry
-    pushMatrix();
-    for (int i = 2005; i <= 2023; i++){
-      drawYearDisc(i);
-    }
-    popMatrix();
-  }
-  else {
+  //if (!showSpindle){
+  //  // show spindle geometry
+  //  pushMatrix();
+  //  for (int i = 2005; i <= 2023; i++){
+  //    drawYearDisc(i);
+  //  }
+  //  popMatrix();
+  //}
+  if (geometry){
     // show flat weave geometry
     for (int i = 2005; i <= 2023; i++){
       drawYearSquare(i);
@@ -186,6 +189,15 @@ void draw(){
     }
   }
   //*/
+  
+  // GUI controls
+  GUI();
+  if ((mouseX < 200) && (mouseY < 300)){
+    cam.setActive(false);
+  }
+  else{
+    cam.setActive(true);
+  }
 
 }
 
