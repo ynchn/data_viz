@@ -17,6 +17,7 @@ float fillColor = 140;
 
 PFont yearLabelFont;
 
+
 // color palette
 color cRed = #D56E78;
 color cPurple = #C688B9;
@@ -37,11 +38,15 @@ boolean showAmigurumi = false;
 boolean showMacrame = false;
 boolean showFB = false;
 
+// zigzag or weave pattern
+boolean zigzag = true;
+
 // show cout cin records on the geometry
 boolean showCoutCin = true;
 // show cout cin aggregation
 boolean showAgg = true;
 float lineWeight = 1;
+
 
 // handling data
 Table table;
@@ -59,6 +64,7 @@ void setup(){
   size(1680, 1000, P3D);
   smooth(); // anti-aliasing
   
+  
   // Set camera
   // cam = new PeasyCam(this, 800);
   // PeasyCam (this, x position, y position, z position, viewing distance)
@@ -74,6 +80,7 @@ void setup(){
   //default values are : perspective(PI/3.0, width/height, cameraZ/10.0, cameraZ*10.0) where cameraZ is ((height/2.0) / tan(PI*60.0/360.0));
   perspective(fov, float(width)/float(height), cameraZ/10.0, cameraZ*10.0); // if using 0.001 instead of cameraZ/10.0 so that all things close to the screen can be seen - get noise
   
+  
   // GUI
   cp5 = new ControlP5(this);
   setGUI();
@@ -81,7 +88,7 @@ void setup(){
   yearLabelFont = createFont("Georgia", 64, true);
   
   
-  // Load data
+  // Load book data
   //table = loadTable("cleaned_data.csv", "header, csv");
   //table = loadTable("data_nodup_first.csv", "header, csv");
   table = loadTable("data_nodup_last.csv", "header, csv");
@@ -97,6 +104,7 @@ void setup(){
     record_arrL.add(new Record(title, cout, cin, timeOutside, artform));
   }
   
+  // Load aggregated checkin/checkout data
   coutFreqTable = loadTable("aggregated_cout.csv", "header, csv");
   for (int i = 0; i < coutFreqTable.getRowCount(); i++){
     coutDict.put(coutFreqTable.getString(i, 0), coutFreqTable.getInt(i, 1));
@@ -109,6 +117,7 @@ void setup(){
     String joinedKey = String.join("-", ymd[0], ymd[1], ymd[2]);
     cinDict.put(joinedKey, cinFreqTable.getInt(i, 1));
   }
+  
   
 }
 
@@ -123,6 +132,7 @@ void draw(){
   for (int i = 0; i < record_arrL.size(); i++){
     makeWeave = false;
     Record currR = record_arrL.get(i);
+    
     
     String artform = currR.getArtform();
     if (artform.equals("crochet")){
@@ -155,9 +165,8 @@ void draw(){
       continue;
     }
 
-    // Calculate point and curve positions
-    // Draw curve of 1 book
 
+    // parse checkin and checkout dates for current book
     currR.calcCoutYMD();
     currR.calcCinYMD();
     int coutYear = currR.getCoutYear();
@@ -173,18 +182,27 @@ void draw(){
       continue;
     }
     
+    // Look up aggregated frequency data
+    // on the checkout and checkin dates of current book
     String coutDate = split(currR.cout, ' ')[0];
     String cinDate = split(currR.cin, ' ')[0];
     int coutSize = coutDict.get(coutDate);
     int cinSize = cinDict.get(cinDate);
 
-    int cout_x = (coutDay - 1) * 10;
-    int cout_z = (coutYear - 2005) * (120 + 20) + coutMonth * 10;
+    // Calculate point and curve positions
+    // Draw for 1 book
+    int cout_x, cout_z, cin_x, cin_z;
+    cout_x = (coutDay - 1) * 10;
+    cout_z = (coutYear - 2005) * (120 + 20) + coutMonth * 10;
     
-    int cin_x = (cinDay - 1) * 10;
-    int cin_z = (cinYear - 2005) * (120 + 20) + cinMonth * 10;
-    //println(YMD[0], YMD[1], YMD[2], x, z);
-    
+    cin_x = (cinDay - 1) * 10;
+    cin_z = (cinYear - 2005) * (120 + 20) + cinMonth * 10;
+
+    if (!zigzag){
+      cout_x = flipDateCoords(coutYear, coutMonth, coutDay);
+      cin_x = flipDateCoords(cinYear, cinMonth, cinDay);
+    }
+
     int t_y = -1 * currR.getTimeOutsideLibrary();
     float t_x = (cin_x - cout_x) / 2.0 + cout_x;
     float t_z = (cin_z - cout_z) / 2.0 + cout_z;
@@ -220,7 +238,7 @@ void draw(){
   // GUI controls
   GUI();
   
-  boolean cond1 = (mouseX < 200) && (mouseY < 700);
+  boolean cond1 = (mouseX < 200) && (mouseY < 800);
   boolean cond2 = (mouseY < 100) && (mouseX < 300);
   if (cond1 || cond2){
     cam.setActive(false);
@@ -229,6 +247,32 @@ void draw(){
     cam.setActive(true);
   }
 
+}
+
+
+    
+int flipDateCoords(int year, int month, int day){
+  int x = (day - 1) * 10;
+  if (month % 2 == 0){
+      int rMost = 0;
+      if (month >= 8){
+        rMost = 300;
+      }
+      else if (month == 4 || month == 6){
+        rMost = 290;
+      }
+      else{
+        if (year % 4 == 0){
+          // leap year
+          rMost = 280;
+        }
+        else{
+          rMost = 270;
+        }
+      }
+      x = rMost - (day - 1) * 10;
+  }
+  return x;
 }
 
 void drawCurve(int cout_x, int cout_z, int cin_x, int cin_z, float t_x, int t_y, float t_z, boolean showCoutCin){

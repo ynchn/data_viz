@@ -1,7 +1,5 @@
 void setGUI() {
   float leftX = 30;
-  float rightX = 150;
-  
   
   //PFont pfont = createFont("Serif", 32, true);
   //ControlFont cp5_font = new ControlFont(pfont, 16);
@@ -56,13 +54,20 @@ void setGUI() {
   .setPosition(leftX, 240)
   .setSize(60, 20);
   
+  cp5.addToggle("zigzag")
+  .setLabel("Change date directions")
+  .setColorActive(color(fillColor))
+  .setColorForeground(color((fillColor + bgColor)/2))
+  .setColorBackground(color((fillColor + bgColor)/2))
+  .setPosition(leftX, 310)
+  .setSize(30, 20);
   
   cp5.addToggle("geometry")
   .setLabel("Show Geometry")
   .setColorActive(color(fillColor))
   .setColorForeground(color((fillColor + bgColor)/2))
   .setColorBackground(color((fillColor + bgColor)/2))
-  .setPosition(leftX, 310)
+  .setPosition(leftX, 350)
   .setSize(30, 20);
   
   cp5.addToggle("showCoutCin")
@@ -70,7 +75,7 @@ void setGUI() {
   .setColorActive(cYellow)
   .setColorForeground(color(#5B632B))
   .setColorBackground(color(#5B632B))
-  .setPosition(leftX, 350)
+  .setPosition(leftX, 390)
   .setSize(30, 20);
   
   cp5.addToggle("showAgg")
@@ -78,7 +83,7 @@ void setGUI() {
   .setColorActive(cYellow)
   .setColorForeground(color(#5B632B))
   .setColorBackground(color(#5B632B))
-  .setPosition(leftX, 390)
+  .setPosition(leftX, 430)
   .setSize(30, 20);
   
   
@@ -88,7 +93,7 @@ void setGUI() {
   .setColorActive(cRed)
   .setColorForeground(color(#572D31))
   .setColorBackground(color(bgColor))
-  .setPosition(leftX, 430)
+  .setPosition(leftX, 470)
   .setSize(50, 20);
   
   
@@ -96,53 +101,54 @@ void setGUI() {
   .setLabel("Zoom In")
   .setColorActive(color(#E6A05E))
   .setColorForeground(color(#66472A))
-  .setPosition(leftX, 490);
+  .setPosition(leftX, 530);
   
   cp5.addBang("zoomOut")
   .setLabel("Zoom Out")
   .setColorActive(color(#E6A05E))
   .setColorForeground(color(#66472A))
-  .setPosition(leftX + 50, 490);
+  .setPosition(leftX + 50, 530);
 
 
   cp5.addTextlabel("rotate Y")
   .setText("Rotate along the y-axis")
-  .setPosition(leftX, 550);
+  .setPosition(leftX, 590);
   
   cp5.addBang("rotY")
   .setLabel("CW")
-  .setPosition(leftX, 570);
+  .setPosition(leftX, 610);
 
   cp5.addBang("rotYneg")
   .setLabel("CCW")
-  .setPosition(leftX + 50, 570);
+  .setPosition(leftX + 50, 610);
 
 
   cp5.addTextlabel("rotate X")
   .setText("Rotate along the x-axis")
-  .setPosition(leftX, 620);
+  .setPosition(leftX, 660);
   
   cp5.addBang("rotXneg")
   .setLabel("CW")
-  .setPosition(leftX, 640);
+  .setPosition(leftX, 680);
 
   cp5.addBang("rotX")
   .setLabel("CCW")
-  .setPosition(leftX + 50, 640);
+  .setPosition(leftX + 50, 680);
   
+  
+  cp5.addTextlabel("double click")
+  .setText("Double click left mouse key to reset view")
+  .setPosition(leftX, 740);
   
   cp5.addTextlabel("arrow keys")
   .setText("Use arrow keys to navigate the calender\nUp/Down - move through years & months\nLeft/Right - move through days")
-  .setPosition(leftX, 700);
+  .setPosition(leftX, 760);
   
-  cp5.addTextlabel("key control")
-  .setText("Additional key control:\n1 - rotateY CW\n2 - rotateY CCW\n3 - rotateX CCW\n4 - rotateX CW\n9 - Zoom In\n0 - Zoom Out")
-  .setPosition(leftX, 740);
+  cp5.addTextlabel("key controls")
+  .setText("Additional key controls:\n1 - rotateY CW\n2 - rotateY CCW\n3 - rotateX CCW\n4 - rotateX CW\n9 - Zoom In\n0 - Zoom Out")
+  .setPosition(leftX, 800);
 
 
-  
-  
-  
   // draw this after we disable depth in GUI()
   cp5.setAutoDraw(false);
 }
