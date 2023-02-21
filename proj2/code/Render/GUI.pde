@@ -59,55 +59,85 @@ void setGUI() {
   
   cp5.addToggle("geometry")
   .setLabel("Show Geometry")
+  .setColorActive(color(fillColor))
+  .setColorForeground(color((fillColor + bgColor)/2))
+  .setColorBackground(color((fillColor + bgColor)/2))
+  .setPosition(leftX, 310)
+  .setSize(30, 20);
+  
+  cp5.addToggle("showCoutCin")
+  .setLabel("Show Checkin/Checkout Points")
   .setColorActive(cYellow)
   .setColorForeground(color(#5B632B))
   .setColorBackground(color(#5B632B))
-  .setPosition(leftX, 310)
+  .setPosition(leftX, 350)
   .setSize(30, 20);
+  
+  cp5.addToggle("showAgg")
+  .setLabel("Show Checkin/Checkout Aggregation")
+  .setColorActive(cYellow)
+  .setColorForeground(color(#5B632B))
+  .setColorBackground(color(#5B632B))
+  .setPosition(leftX, 390)
+  .setSize(30, 20);
+  
+  
+  cp5.addSlider("lineWeight")
+  .setLabel("Show Connection")
+  .setRange(0, 2)
+  .setColorActive(cRed)
+  .setColorForeground(color(#572D31))
+  .setColorBackground(color(bgColor))
+  .setPosition(leftX, 430)
+  .setSize(50, 20);
   
   
    cp5.addBang("zoomIn")
   .setLabel("Zoom In")
   .setColorActive(color(#E6A05E))
   .setColorForeground(color(#66472A))
-  .setPosition(leftX, 350);
+  .setPosition(leftX, 490);
   
   cp5.addBang("zoomOut")
   .setLabel("Zoom Out")
   .setColorActive(color(#E6A05E))
   .setColorForeground(color(#66472A))
-  .setPosition(leftX + 50, 350);
+  .setPosition(leftX + 50, 490);
 
 
   cp5.addTextlabel("rotate Y")
   .setText("Rotate along the y-axis")
-  .setPosition(leftX, 410);
+  .setPosition(leftX, 550);
   
   cp5.addBang("rotY")
   .setLabel("CW")
-  .setPosition(leftX, 430);
+  .setPosition(leftX, 570);
 
   cp5.addBang("rotYneg")
   .setLabel("CCW")
-  .setPosition(leftX + 50, 430);
+  .setPosition(leftX + 50, 570);
 
 
   cp5.addTextlabel("rotate X")
   .setText("Rotate along the x-axis")
-  .setPosition(leftX, 480);
+  .setPosition(leftX, 620);
   
   cp5.addBang("rotXneg")
   .setLabel("CW")
-  .setPosition(leftX, 500);
+  .setPosition(leftX, 640);
 
   cp5.addBang("rotX")
   .setLabel("CCW")
-  .setPosition(leftX + 50, 500);
+  .setPosition(leftX + 50, 640);
   
   
   cp5.addTextlabel("arrow keys")
-  .setText("Use arrow keys to navigate the calender")
-  .setPosition(leftX, 560);
+  .setText("Use arrow keys to navigate the calender\nUp/Down - move through years & months\nLeft/Right - move through days")
+  .setPosition(leftX, 700);
+  
+  cp5.addTextlabel("key control")
+  .setText("Additional key control:\n1 - rotateY CW\n2 - rotateY CCW\n3 - rotateX CCW\n4 - rotateX CW\n9 - Zoom In\n0 - Zoom Out")
+  .setPosition(leftX, 740);
 
 
   
