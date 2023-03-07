@@ -1,49 +1,110 @@
 import requests
 from bs4 import BeautifulSoup
+import json
 
-url_n = "https://www.braceletbook.com/patterns/?type=n"
-result = requests.get(url_n).text
-# print(result)
+def scrapSinglePatternItem(pattern, all_patterns_json):
+    p_json = {}
 
-soup = BeautifulSoup(result, "html.parser")
-# print(soup.prettify())
+    curr_pattern = pattern.find('a', {'class': 'id'})
 
-patterns = soup.find_all("div", class_="patterns_item")
-# print(patterns)
-# a list
+    # pattern id
+    pattern_id_str = curr_pattern.text.strip()
+    # print('id:', int(pattern_id[1:]))
+    p_json['id'] = int(pattern_id_str[1:])
 
-for p in patterns:
-    if pattern.find('div', {'class': 'ad_center_nomargin'}):
-        continue  # Skip adslot div
+    # pattern URL
+    pattern_url = curr_pattern['href']
+    # print('pattern url:', pattern_url)
+    p_json['pattern_url'] = pattern_url
 
-    pattern_id = p.find('a', {'class': 'id'})
-    # if pattern_id:
-    pattern_id = pattern_id.text.strip()
-    print(pattern_id)
-    # else:
-    #     # adslot - skip
-    #     # print(p)
-    #     continue
+    # preview img URL
+    img_tag = pattern.find('img')
+    img_url_list = [img_tag['src']]
+    srcset = img_tag['srcset']
+    img_url_list.extend(srcset.split(','))
+    # print('preview urls:', img_url_list)
+    p_json['preview_url_list'] = img_url_list
+
+    # dimensions
+    pattern_dim = pattern.find('div', {'class': 'dimensions_icon'}).find_next_sibling('span').text.strip()
+    # print('dimensions:', pattern_dim)
+    # cols: p_json['dimensions'][0]
+    #       pairs of strings that are knotted in the 1st row in the pattern
+    # cols == pattern_num_strs / 2 should always be true
+    # cols, rows = pattern_dim.split('x')
+    p_json['dimensions'] = pattern_dim.split('x')
+
+    # strings
+    pattern_num_strs = pattern.find('div', {'class': 'strings_icon'}).find_next_sibling('span').text.strip()
+    # print('strings:', pattern_num_strs)
+    p_json['num_strings'] = pattern_num_strs
+
+    # colors
+    pattern_colors = pattern.find('div', {'class': 'colors_icon'}).find_next_sibling('span').text.strip()
+    # print('colors:', pattern_colors)
+    p_json['num_colors'] = pattern_num_strs
+
+    # contributor
+    added_by_tag = pattern.find('span', {'class': 'added_by'})
+    contributor_url = added_by_tag.find('a')['href']
+    contributor_name = added_by_tag.find('a').text
+    # print('contributor info:', contributor_name, contributor_url)
+    p_json['contributor_info'] = [contributor_name, contributor_url]
+
+    # print()
+    all_patterns_json.append(p_json)
+    
+
+def scrapeCurrPage(soup, all_patterns_json):
+    '''
+    Given the soup of current url, scrape for pattern items.
+
+    Params:
+    soup: parsed HTML by BeautifulSoup
+
+    Returns:
+    None
+    '''
+    patterns = soup.find_all("div", class_="patterns_item")
+    # returns a list
+
+    for p in patterns:
+        # skip adslot div
+        if p.find('div', {'class': 'ad_center_nomargin'}):
+            continue
+
+        # scrape current pattern div p
+        scrapSinglePatternItem(p, all_patterns_json)
+        
 
 
+    # num photos, videos, loves, rating
 
-# # Find the pattern ID
-# pattern_id = soup.find('a', {'class': 'id'}).text.strip()
+#----------------------- MAIN FUNCTION ------------------------
+if __name__ == "__main__":
+    url_n = "https://www.braceletbook.com/patterns/?type=n"
+    # result = requests.get(url_n).text
+    # print(result)
 
-# # Find the pattern dimensions
-# pattern_dimensions = soup.find('span', {'class': 'caption padded'}, string='19x36').text.strip()
+    all_patterns_json = []
 
-# # Find the number of strings
-# num_strings = soup.find('span', {'class': 'caption padded'}, string='20').text.strip()
-
-# # Find the number of colors
-# num_colors = soup.find('span', {'class': 'caption'}, string='4').text.strip()
-
-# # Find the number of photos
-# num_photos = soup.find('span', {'class': 'caption padded'}, {'class': 'photos_icon'}).text.strip()
-
-# # Find the number of videos
-# num_videos = soup.find('span', {'class': 'caption padded'}, {'class': 'videos_icon'}).text.strip()
-
-# # Find the number of loves
-# num_loves = soup.find('span', {'
+    i = 0
+    while url_n:
+        result = requests.get(url_n).text
+        soup = BeautifulSoup(result, "html.parser")
+        # print(soup.prettify())
+        next_page = soup.find('a', {'class': 'next'})
+        # scrape current page
+        scrapeCurrPage(soup, all_patterns_json)
+        i += 1
+        # check if there is a next page
+        if next_page:
+            # update url_n with the link to the next page
+            url_n = next_page["href"]
+        else:
+            # stop looping if there is no next page
+            url_n = None
+        
+        if i == 2:
+            break
+    print(all_patterns_json)
