@@ -1,3 +1,8 @@
+/**
+* Record class
+* Given a book's check-out and check-in records and related information from the CSV,
+* creates a Record object.
+**/
 class Record{
   String title;
   String cout;

@@ -1,4 +1,6 @@
-// Flat Weave
+/**
+* Flat Weave Geometry
+**/
 // draws a year as a square, each line is a month
 void drawYearSquare(int year){
   int febDays = 28;

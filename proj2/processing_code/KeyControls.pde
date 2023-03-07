@@ -1,10 +1,13 @@
 /**
- * Need to map to GUI
+ * Mapped to GUI
  */
  import java.awt.event.KeyEvent;
 void keyPressed() {
   if (key == '1') {
     cam.rotateY(-PI/2);
+    //float[] camPosVec = cam.getLookAt();
+
+    //cam.lookAt(camPosVec[0], camPosVec[1], 1400, 800, 1000);
   }
   if (key == '2') {
     cam.rotateY(PI/2);

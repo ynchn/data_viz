@@ -1,3 +1,6 @@
+/**
+* Sliders, buttons, and text in the GUI
+**/
 void setGUI() {
   float leftX = 30;
   

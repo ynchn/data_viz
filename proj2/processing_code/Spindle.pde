@@ -1,4 +1,7 @@
-// Spindle
+/**
+* Spindle Geometry
+* This is not used in the final visualization
+**/
 // wrapper for each year disc
 void drawYearDisc(int year){
   translate(0, 0, 80);

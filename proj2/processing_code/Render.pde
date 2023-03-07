@@ -1,3 +1,42 @@
+/**
+* Mat 259 Project 2 - 3D Visualization
+* "Crochet and Macrame Check-out Check-in Records Timeline Weave"
+*
+* A 3D interactive demo that uses peasycam and controlP5, created in Processing 4.1.2
+*
+* Date: February 21, 2023
+* Author: Yanchen Lu
+* Instructor: George Legrady
+* 
+* Usage:
+* - GUI:
+*   - Use sliders to adjust demo background color and fill color.
+*     Fill color changes the look of the timeline and grid geometry.
+*   - Use buttons to select and show "Crochet", "Amigurumi", "Macrame", "Friendship Bracelet" books records.
+*     The crochet category has a lot of data, so it may be laggy.
+*   - Change Date Directions: By default the data is arranged where each rectangle represents a year, from 2005 to 2023 towards the camera,
+*     each line represents a month, from January to December towards the camera, and each dot represents a day, from the first day of the
+*     month to the last day from left to right.
+*     Turning off the button changes the grid to a winding "snake grid", where the direction of how the positions of the days alternate
+*     between months. For example, in January, the first day is on the left most side and the last day is on the right most side; in February,
+*     the first day is on the right most side and the last day is the left side.
+*     This button affects the look of the weave visualization.
+*   - Use buttons to turn on/off the grid geometry, checkin/checkout points, checkin/checkout record aggregation points for each day in the timeline.
+*   - Use slider to adjust the stroke weight of lines that connect the aggregation points to checkin/checkout points.
+*   - Use buttons to zoom in/zoom out, rotate along the x- or y-axis, CCW or CW.
+*     You can rotate along an axis, then zoom in, to position the camera at the middle of the timeline.
+* - Keyboard:
+*   - Press 1 and 2 to rotate around the y-axis.
+*   - Press 3 and 4 to rotate around the x-axis.
+*   - Press 9 and 0 to zoom in and zoom out.
+*   - Use up/down arrows to move camera through months and years.
+*   - Use left/right arrows to move camera through days.
+* - Mouse:
+*   - Double click to reset view.
+*   - Left click to rotate.
+*   - Right click to zoom.
+*   - Middle wheel to zoom, click to drag and move the visualization.
+**/
 
 import java.util.*;
 import peasy.*;
