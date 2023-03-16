@@ -2,6 +2,8 @@
  * TODO: map to GUI
  */
 import java.awt.event.KeyEvent;
+boolean isLooping = true;
+
 void keyPressed() {
   if (key == '1') {
     cam.rotateY(-PI/2);
@@ -20,14 +22,14 @@ void keyPressed() {
     // move left
     // x--
     float[] camPosVec = cam.getLookAt();
-    camPosVec[0] -= 10;
+    camPosVec[0] -= 50;
     cam.lookAt(camPosVec[0], camPosVec[1], camPosVec[2]);
   }
   if (keyCode == 39){
     // move right
     // x++
     float[] camPosVec = cam.getLookAt();
-    camPosVec[0] += 10;
+    camPosVec[0] += 50;
     cam.lookAt(camPosVec[0], camPosVec[1], camPosVec[2]);
   }
 
@@ -35,29 +37,42 @@ void keyPressed() {
     // move up
     // y--
     float[] camPosVec = cam.getLookAt();
-    camPosVec[1] -= 10;
+    camPosVec[1] -= 50;
     cam.lookAt(camPosVec[0], camPosVec[1], camPosVec[2]);
   }
   if (keyCode == 40){
     // move down
     // y++
     float[] camPosVec = cam.getLookAt();
-    camPosVec[1] += 10;
+    camPosVec[1] += 50;
     cam.lookAt(camPosVec[0], camPosVec[1], camPosVec[2]);
   }
     if (keyCode == 87){
     // W
     // z--
     float[] camPosVec = cam.getLookAt();
-    camPosVec[2] -= 10;
+    camPosVec[2] -= 50;
     cam.lookAt(camPosVec[0], camPosVec[1], camPosVec[2]);
   }
   if (keyCode == 83){
     // S
     // z++
     float[] camPosVec = cam.getLookAt();
-    camPosVec[2] += 10;
+    camPosVec[2] += 50;
     cam.lookAt(camPosVec[0], camPosVec[1], camPosVec[2]);
   }
+  
+  //if (keyCode == 80){
+  //  // P
+  //  if (isLooping) {
+  //    noLoop();
+  //    isLooping = false;
+  //  } else {
+  //    loop();
+  //    isLooping = true;
+      
+  //  }
+  //  //noLoop();
+  //}
 
 }

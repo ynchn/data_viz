@@ -14,6 +14,8 @@ class Pattern{
   String contributor_name;
   String contributor_url;
   
+  Triple coord_t;
+  
   /**
   * Pattern class constructor
   */
@@ -29,19 +31,22 @@ class Pattern{
     this.num_colors = row.getInt("num_colors");
     this.contributor_name = row.getString("contributor_name");
     this.contributor_url =row.getString("contributor_url");
+    
+    this.coord_t = new Triple(this.num_strings, this.num_colors, this.rows);
   }
 
+  Triple getCoordinateTriple(){
+    return this.coord_t;
+  }
   
-  //int[] getYMD(String rawDate){
-  //  String[] splitDate = split(rawDate, '-');
-  //  int parsedYear = int(splitDate[0]);
-  //  int parsedMonth = int(splitDate[1]);
-  //  // split date 3rd element includes <day, ' ', time>
-  //  int parsedDay = int(split(splitDate[2], ' ')[0]); //split again to get rid of time
-  //  //int parsedDay = int(splitDate[2]);
-  //  int[] parsedYMD = {parsedYear, parsedMonth, parsedDay};
-  //  return parsedYMD;
-  //}
+  String getContributorName(){
+    return this.contributor_name;
+  }
+  
+  String getPreviewURL(){
+    return this.preview_url3;
+  }
+  
   
   ///**
   //* Returns an integer array containing parsed checkout year, month, and day
