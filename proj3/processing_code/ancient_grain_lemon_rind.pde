@@ -6,8 +6,10 @@ import controlP5.*;
 ControlP5 cp5;
 PeasyCam cam;
 
-float bgColor = 35;
+float bgColor = 20;
 float fillColor = 250;
+color cyn = #58D3A4;
+color highlightColor = cyn;
 
 //screen size and Z depth
 int scrX = 1680;
@@ -17,8 +19,16 @@ int scrZ = 50; //peasycam max Z depth
 // handle data
 Table table;
 ArrayList<Pattern> patterns_arrL = new ArrayList<Pattern>();
-HashMap<Triple, ArrayList<Pattern>> coordMap = new HashMap<Triple, ArrayList<Pattern>>();
 HashMap<Triple, PatternCollection> patternMap = new HashMap<Triple, PatternCollection>();
+
+// color palette
+color c0 = #DAB04D;
+color c1 = #9EBF5D;
+color c2 = #5EC58D;
+color c3 = #3EC1C0;
+color c4 = #7BB4DC;
+color c5 = #C59ED2;
+color c6 = #F289A8;
 
 
 void setup(){
@@ -56,14 +66,6 @@ void setup(){
   // map Pattern objects to coordinates
   // k: coordinate Triple
   // v: a PatternCollection object positioned at the k
-  
-  //for (Pattern p: patterns_arrL){
-  //  Triple k = p.getCoordinateTriple();
-  //  ArrayList<Pattern> patternListAtK = coordMap.getOrDefault(k, new ArrayList<Pattern>());
-  //  patternListAtK.add(p);
-  //  coordMap.put(k, patternListAtK);
-  //}
-  
   for (Pattern p: patterns_arrL){
     Triple k = p.getCoordinateTriple();
     PatternCollection c = patternMap.getOrDefault(k, new PatternCollection());
@@ -75,6 +77,20 @@ void setup(){
 
 }
 
+int lerpColorAtTriple(float x, float y, float z){
+  // pt -> x-axis
+  float to_x = sqrt(sq(y) + sq(z));
+  // pt -> y-axis
+  float to_y = sqrt(sq(x)+ sq(z));
+  // pt -> z-axis
+  float to_z = sqrt(sq(x) + sq(y));
+  float amt1 = to_x / (to_x + to_y);
+  color lerpXY = lerpColor(c6, c3, amt1);
+  float amt2 = to_z / (z + to_z);
+  color lerpXYZ = lerpColor(c0, lerpXY, amt2);
+  return lerpXYZ;
+}
+
 
 void draw(){
   background(bgColor);
@@ -82,17 +98,15 @@ void draw(){
   //frameRate(30);
   
   //x-axis
-  stroke(255, 0, 0);
-  line(0, 0, 0, 100, 0, 0);
+  stroke(c6);
+  line(0, 0, 0, 1000, 0, 0);
   //neg y-axis
-  stroke(0, 255, 0);
-  line(0, 0, 0, 0, -100, 0);
+  stroke(c3);
+  line(0, 0, 0, 0, -1000, 0);
   //z-axis
-  stroke(0, 0, 255);
-  line(0, 0, 0, 0, 0, 100);
+  stroke(c0);
+  line(0, 0, 0, 0, 0, 1000);
   
-  
-  stroke(fillColor, 75);
   
   for (HashMap.Entry<Triple, PatternCollection> e : patternMap.entrySet()) {
     Triple k = e.getKey();
@@ -100,9 +114,12 @@ void draw(){
     float y = map(k.getYCoord(), -26, -1, -1000, -1);
     float z = map(k.getZCoord(), 2, 200, 1, 1000);
     
+    // calculate stroke color
+    int sc = lerpColorAtTriple(x, y, z);
+    stroke(sc, 95);
+  
     // ----------
     PatternCollection currCollection = e.getValue();
-    currCollection.loadColorPalette();
     //int sw = currCollection.getSize();
     int sw = int(map(currCollection.getSize(), 1, 200, 3, 30));
     strokeWeight(sw);
@@ -114,7 +131,7 @@ void draw(){
     float mouseCoordDistance = sq(mouseX - screenX(x, y, z)) + sq(mouseY - screenY(x, y, z));
     if (mouseCoordDistance < 30){ //
       //println("sw: " + sw + " mouse distance: " + mouseCoordDistance);
-      fill(color(#58D3A4));
+      fill(color(cyn));
       textMode(SHAPE);
       if (cam.getDistance() < 250){
         textSize(3); // Thisssss could be better
@@ -138,12 +155,12 @@ void draw(){
       }
       //popMatrix();
       strokeWeight(sw);
-      stroke(color(#58D3A4), 75);
+      stroke(cyn, 75);
       point(x, y, z);
 
     }
     // ----------
-    stroke(fillColor, 75);
+    //stroke(fillColor, 75);
     
   }
 
