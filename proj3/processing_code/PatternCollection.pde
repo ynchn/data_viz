@@ -27,23 +27,23 @@ class PatternCollection{
     this.collectionSize =  patterns.size();
   }
   
-  // this is not working
-  // need to figure out how to show this palette
-  void loadColorPalette(){
-    ArrayList<String> colors = new ArrayList<String>();
-    for (String url : this.previewURLs){
-      PImage preview = loadImage(url);
-      loadPixels();
-      for (int i = 0; i < preview.pixels.length; i++) {
-        String c = hex(pixels[i]);
-        if (!colors.contains(c)) {
-          colors.add(c);
-        }
-      }
-    }
-    println(colors);
+  //// this is not working
+  //// need to figure out how to show this palette
+  //void loadColorPalette(){
+  //  ArrayList<String> colors = new ArrayList<String>();
+  //  for (String url : this.previewURLs){
+  //    PImage preview = loadImage(url);
+  //    loadPixels();
+  //    for (int i = 0; i < preview.pixels.length; i++) {
+  //      String c = hex(pixels[i]);
+  //      if (!colors.contains(c)) {
+  //        colors.add(c);
+  //      }
+  //    }
+  //  }
+  //  println(colors);
     
-  }
+  //}
   
   int getSize(){
     return this.collectionSize;
