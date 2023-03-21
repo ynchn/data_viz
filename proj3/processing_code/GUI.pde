@@ -55,7 +55,6 @@ void GUI(){
 }
 
 void setNameListGUI(){
-
   PFont pfont = createFont("Georgia", 72, true);
   ControlFont font = new ControlFont(pfont, 14);
    

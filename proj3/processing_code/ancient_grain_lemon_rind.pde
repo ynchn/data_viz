@@ -102,7 +102,7 @@ void setup(){
 void draw(){
   background(bgColor);
   noFill();
-  //frameRate(30);
+  frameRate(30);
   
   //x-axis
   stroke(c6);
@@ -387,7 +387,11 @@ ArrayList<String> showNameAtPoint(float x, float y, float z, PatternCollection c
 
 void showPreviewAtPoint(PatternCollection currCollection){
   ArrayList<String> previews = currCollection.getPreviewList();
-  float img_y = -1000;
+  //float img_y = -1000;
+  float img_y = 0;
+  pushMatrix();
+  rotateY(PI*0.5);
+  translate(-500, -1000, 1000);
   for (String url : previews){
     PImage img = loadImage(url);
     if (img != null){
@@ -403,9 +407,11 @@ void showPreviewAtPoint(PatternCollection currCollection){
   
       img.resize(newWidth, newHeight);
       
-      image(img, 1200, img_y);
-      
+      //image(img, 1200, img_y);
+      image(img, 0, img_y);
+
       img_y += newHeight + 10;
     }
   }
+  popMatrix();
 }
