@@ -11,11 +11,6 @@ float fillColor = 250;
 
 PFont axisLabelFont;
 
-//screen size and Z depth
-//int scrX = 1680;
-//int scrY = 1000;
-//int scrZ = 50; //peasycam max Z depth
-
 // handle data
 Table table;
 ArrayList<Pattern> patterns_arrL = new ArrayList<Pattern>();
@@ -53,7 +48,7 @@ void setup(){
   // Set camera
   // cam = new PeasyCam(this, 800);
   // PeasyCam (this, x position, y position, z position, viewing distance)
-  cam = new PeasyCam(this, 500, -400, 250, 2500);
+  cam = new PeasyCam(this, 300, -400, 250, 2500);
   cam.setMinimumDistance(100);
   cam.setMaximumDistance(5000); // max viewing distance
 
@@ -157,7 +152,7 @@ void draw(){
         }
   
         if (showPreview){
-          showPreviewAtPoint(currCollection);
+          showPreviewAtPoint(currCollection, showSingleContributor);
         }
       }
       else{
@@ -208,7 +203,7 @@ void draw(){
           }
     
           if (showPreview){
-            showPreviewAtPoint(currCollection);
+            showPreviewAtPoint(currCollection, showSingleContributor);
           }
         }
         else{
@@ -248,7 +243,7 @@ void draw(){
           }
     
           if (showPreview){
-            showPreviewAtPoint(currCollection);
+            showPreviewAtPoint(currCollection, showSingleContributor);
           }
         // ------------------------------------------------
         }
@@ -385,33 +380,46 @@ ArrayList<String> showNameAtPoint(float x, float y, float z, PatternCollection c
   return nameL;
 }
 
-void showPreviewAtPoint(PatternCollection currCollection){
-  ArrayList<String> previews = currCollection.getPreviewList();
-  //float img_y = -1000;
+void showPreviewAtPoint(PatternCollection currCollection, boolean showSingleContributor){
+  ArrayList<Pattern> patterns = currCollection.getPatternList();
+  
+  int idx;
+  String url;
+  PImage img;
+  
+  if (showSingleContributor){
+    ArrayList<String> singleContributorPreviews = new ArrayList<String>();
+    for (Pattern p : patterns){
+      String name = p.getContributorName();
+      if (!name.equals(selected)){
+        continue;
+      }
+      singleContributorPreviews.add(p.getPreviewURL());
+    }
+    idx = int(random(singleContributorPreviews.size()));
+    url = singleContributorPreviews.get(idx);
+    img = loadImage(url);
+  }
+  else{
+    idx = int(random(patterns.size()));
+    Pattern p = patterns.get(idx);
+    url = p.getPreviewURL();
+    img = loadImage(url);
+  }
+  
   float img_y = 0;
   pushMatrix();
-  rotateY(PI*0.5);
-  translate(-500, -1000, 1000);
-  for (String url : previews){
-    PImage img = loadImage(url);
-    if (img != null){
+  rotateZ(PI * 0.5);
+  translate(-1000, 0, 0);
+  
+  if (img != null){
     
-      // calculate new width based on original aspect ratio
-      //int newHeight = 50;
-      //int newWidth = (int) ((float) img.width / img.height * newHeight);
-      
-      int newWidth = 500; // fixed width
-  
-      // calculate the new height while keeping the aspect ratio
-      int newHeight = (int) (img.height * ((float) newWidth / img.width));
-  
-      img.resize(newWidth, newHeight);
-      
-      //image(img, 1200, img_y);
-      image(img, 0, img_y);
-
-      img_y += newHeight + 10;
-    }
+    int newWidth = 1000; // fixed width
+    // calculate the new height while keeping the aspect ratio
+    int newHeight = (int) (img.height * ((float) newWidth / img.width));
+    img.resize(newWidth, newHeight);
+    
+    image(img, 0, img_y);
   }
   popMatrix();
 }
