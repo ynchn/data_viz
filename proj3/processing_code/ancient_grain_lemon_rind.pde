@@ -11,11 +11,10 @@ float fillColor = 250;
 
 PFont axisLabelFont;
 
-
 //screen size and Z depth
-int scrX = 1680;
-int scrY = 1000;
-int scrZ = 50; //peasycam max Z depth
+//int scrX = 1680;
+//int scrY = 1000;
+//int scrZ = 50; //peasycam max Z depth
 
 // handle data
 Table table;
@@ -37,8 +36,14 @@ color highlightColor = cyn;
 // GUI control
 boolean showName = true;
 boolean showPreview = false;
+ArrayList<String> nameL = new ArrayList<String>();
+
+// mouse press control
+boolean selectHighlight = false;
+Triple selectedCoord;
 
 
+// ----------------------------------------------------------------------------------------------------
 void setup(){
   size(1680, 1000, P3D);
   smooth(4); // anti-aliasing
@@ -91,6 +96,7 @@ void setup(){
 
 }
 
+
 // ----------------------------------------------------------------------------------------------------
 void draw(){
   background(bgColor);
@@ -107,95 +113,103 @@ void draw(){
   stroke(c0);
   line(0, 0, 0, 0, 0, 1000);
   
-  
-  for (HashMap.Entry<Triple, PatternCollection> e : patternMap.entrySet()) {
-    Triple k = e.getKey();
-    float x = map(k.getXCoord(), 3, 64, 1, 1000);
-    float y = map(k.getYCoord(), -26, -1, -1000, -1);
-    float z = map(k.getZCoord(), 2, 200, 1, 1000);
+  if (!selectHighlight){
     
-    // calculate stroke color
-    int sc = lerpColorAtTriple(x, y, z);
-    stroke(color(sc, 75));
+    for (HashMap.Entry<Triple, PatternCollection> e : patternMap.entrySet()) {
+      Triple k = e.getKey();
+      float x = map(k.getXCoord(), 3, 64, 1, 1000);
+      float y = map(k.getYCoord(), -26, -1, -1000, -1);
+      float z = map(k.getZCoord(), 2, 200, 1, 1000);
+      
+      // calculate point size
+      PatternCollection currCollection = e.getValue();
+      int sw = int(map(currCollection.getSize(), 1, 200, 3, 30));
+      strokeWeight(sw);
+      
+      // ---------- highlight point ----------
+      float mouseCoordDistance = sq(mouseX - screenX(x, y, z)) + sq(mouseY - screenY(x, y, z));
+      if (mouseCoordDistance < 30){
+        // select/highlight one point by pressing right mouse button
+        if (mousePressed && (mouseButton == RIGHT)) {
+          if (!selectHighlight){
+            selectHighlight = true;
+          }
+          selectedCoord = k;
+          //break;
+        }
+        
+        // draw highlighted point when mouse position is close to a point
+        // point gets highlighted regardless if it's selected
+        stroke(cyn, 95);
+        point(x, y, z);
+        
+        prepFont();
   
-    // ----------
-    PatternCollection currCollection = e.getValue();
-    //int sw = currCollection.getSize();
-    int sw = int(map(currCollection.getSize(), 1, 200, 3, 30));
-    strokeWeight(sw);
-    point(x, y, z);
-    
-    // ---------- selected point ----------
-    //double mouseCoordDistance = Math.sqrt(sq(mouseX - screenX(x, y, z)) + sq(mouseY - screenY(x, y, z)));
-    //if (mouseCoordDistance < sw){ // how do I only select 1 point?
-    float mouseCoordDistance = sq(mouseX - screenX(x, y, z)) + sq(mouseY - screenY(x, y, z));
-    if (mouseCoordDistance < 30){ //
-      //println("sw: " + sw + " mouse distance: " + mouseCoordDistance);
-      fill(color(cyn));
-      textMode(SHAPE);
-      textFont(axisLabelFont);
-      textSize(64);
-      if (cam.getDistance() < 250){
-        textSize(24);
+        if (showName){
+          nameL = showNameAtPoint(x, y, z, currCollection);
+        }
+  
+        if (showPreview){
+          showPreviewAtPoint(currCollection);
+        }
       }
       else{
-        textSize(32);
+        // calculate point color
+        int sc = lerpColorAtTriple(x, y, z);
+        stroke(color(sc, 75));
+        // draw point
+        point(x, y, z);
+      }
+      // -------------------------------------
+      
+    }// end normal loop
+  
+  }
+  else{
+    // selected highlight point at coordinate `selectedCoord`
+    for (HashMap.Entry<Triple, PatternCollection> e : patternMap.entrySet()) {
+      Triple k = e.getKey();
+      
+      float x = map(k.getXCoord(), 3, 64, 1, 1000);
+      float y = map(k.getYCoord(), -26, -1, -1000, -1);
+      float z = map(k.getZCoord(), 2, 200, 1, 1000);
+      
+      // calculate point size
+      PatternCollection currCollection = e.getValue();
+      int sw = int(map(currCollection.getSize(), 1, 200, 3, 30));
+      strokeWeight(sw);
+      // ---------- selected/highlighted point ----------
+      if (selectedCoord == k){
+        stroke(cyn, 95);
+        point(x, y, z);
+        
+        prepFont();
+  
+        if (showName){
+          nameL = showNameAtPoint(x, y, z, currCollection);
+        }
+  
+        if (showPreview){
+          showPreviewAtPoint(currCollection);
+        }
+      // ------------------------------------------------
+      }
+      else{
+        // calculate point color
+        int sc = lerpColorAtTriple(x, y, z);
+        stroke(color(sc, 75));
+        // draw point
+        point(x, y, z);
       }
       
-      //pushMatrix();
-      //float[] rotations = cam.getRotations();
-      //rotateX(rotations[0]);
-      //rotateY(rotations[1]);
-      //rotateZ(rotations[2]);
-      if (showName){
-      float pos = y;
-        HashMap<String, Integer> name_num = currCollection.getNameNumPairs();
-        for (String name : name_num.keySet()){
-          int num = name_num.get(name);
-          String concat = name + ": " + num;
-          text(concat, x, pos, z);
-          pos += 40;
-        }
-      }
-      //popMatrix();
 
-      strokeWeight(sw);
-      stroke(cyn, 95);
-      point(x, y, z);
-      if (showPreview){
-        ArrayList<String> previews = currCollection.getPreviewList();
-        float img_y = -1000;
-        //pushMatrix();
-        //translate(0, 0, 250);
-        for (String url : previews){
-          PImage img = loadImage(url);
-          if (img != null){
-          
-            // calculate new width based on original aspect ratio
-            //int newHeight = 50;
-            //int newWidth = (int) ((float) img.width / img.height * newHeight);
-            
-            int newWidth = 500;  // your desired width
-  
-            // calculate the new height while keeping the aspect ratio
-            int newHeight = (int) (img.height * ((float) newWidth / img.width));
-  
-            img.resize(newWidth, newHeight);
-            
-            image(img, 1200, img_y);
-            
-            img_y += newHeight + 10;
-          }
-        }
-        //popMatrix();
-      }
+      
 
-
-    }
-    // ----------
+    }// end normal loop
     
   }
-
+  setNameListGUI();
+  
   strokeWeight(1);
   
   drawAxisLabels(0);
@@ -206,13 +220,15 @@ void draw(){
   GUI();
   boolean cond1 = (mouseX < 200) && (mouseY < 200);
   boolean cond2 = (mouseY < 100) && (mouseX < 300);
-  if (cond1 || cond2){
+  boolean cond3 = (mouseX > 1400) && (mouseY < 500);
+  if (cond1 || cond2 || cond3){
     cam.setActive(false);
   }
   else{
     cam.setActive(true);
   }
 }
+
 
 // ----------------------------------------------------------------------------------------------------
 int lerpColorAtTriple(float x, float y, float z){
@@ -228,7 +244,6 @@ int lerpColorAtTriple(float x, float y, float z){
   color lerpXYZ = lerpColor(c0, lerpXY, amt2);
   return lerpXYZ;
 }
-
 
 void drawAxisLabels(int axis){
   // x: axis == 0
@@ -274,5 +289,56 @@ void drawAxisLabels(int axis){
     //text("number of rows", 0, 0, 0);
     text("length", 0, 0, 0);
     popMatrix();
+  }
+}
+
+void prepFont(){
+  fill(color(cyn));
+  textMode(SHAPE);
+  textFont(axisLabelFont);
+  if (cam.getDistance() < 250){
+    textSize(24);
+  }
+  else{
+    textSize(32);
+  }
+}
+
+ArrayList<String> showNameAtPoint(float x, float y, float z, PatternCollection currCollection){
+  //float pos = y;
+  ArrayList<String> nameL = new ArrayList<String>();
+  HashMap<String, Integer> name_num = currCollection.getNameNumPairs();
+  for (String name : name_num.keySet()){
+    int num = name_num.get(name);
+    String concat = name + ": " + num;
+    nameL.add(concat);
+    //text(concat, x, pos, z);
+    //pos += 40;
+  }
+  return nameL;
+}
+
+void showPreviewAtPoint(PatternCollection currCollection){
+  ArrayList<String> previews = currCollection.getPreviewList();
+  float img_y = -1000;
+  for (String url : previews){
+    PImage img = loadImage(url);
+    if (img != null){
+    
+      // calculate new width based on original aspect ratio
+      //int newHeight = 50;
+      //int newWidth = (int) ((float) img.width / img.height * newHeight);
+      
+      int newWidth = 500; // fixed width
+  
+      // calculate the new height while keeping the aspect ratio
+      int newHeight = (int) (img.height * ((float) newWidth / img.width));
+  
+      img.resize(newWidth, newHeight);
+      
+      image(img, 1200, img_y);
+      
+      img_y += newHeight + 10;
+    }
   }
 }

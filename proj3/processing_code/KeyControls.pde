@@ -62,17 +62,14 @@ void keyPressed() {
     cam.lookAt(camPosVec[0], camPosVec[1], camPosVec[2]);
   }
   
-  //if (keyCode == 80){
-  //  // P
-  //  if (isLooping) {
-  //    noLoop();
-  //    isLooping = false;
-  //  } else {
-  //    loop();
-  //    isLooping = true;
-      
-  //  }
-  //  //noLoop();
-  //}
+}
 
+//void mouseClicked() {
+//  if (){
+//  }
+//}
+void mousePressed() {
+  if (mousePressed && (mouseButton == RIGHT)) {
+    selectHighlight = false;
+  }
 }
