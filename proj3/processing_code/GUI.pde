@@ -1,5 +1,7 @@
 public ScrollableList nl;
+public Button profileButton;
 public String selected;
+public String profileURL = "https://www.braceletbook.com/";
 
 void setGUI(){
    PFont pfont = createFont("Georgia", 72, true);
@@ -15,24 +17,30 @@ void setGUI(){
   
    cp5.addToggle("showName")
    .setLabel("Contributors")
-   .setPosition(30, 100)
+   .setPosition(30, 80)
    .setSize(50, 20)
    .setFont(font)
    .getCaptionLabel().toUpperCase(false);
   
    cp5.addToggle("showPreview")
    .setLabel("Previews")
-   .setPosition(30, 160)
+   .setPosition(30, 140)
    .setSize(50, 20)
    .setFont(font)
    .getCaptionLabel().toUpperCase(false);
   
   nl = cp5.addScrollableList("nameList")
   .setLabel("Contributor: # of Patterns")
-  .setPosition(1350, 30)
+  .setPosition(1350, 60)
   .setSize(300, 500)
   .setBarHeight(30)
   .setItemHeight(30);
+  
+  profileButton = cp5.addButton("goToURL")
+  .setPosition(1350, 30)
+  .setSize(300, 20)
+  .setFont(font);
+  profileButton.hide();
 
   // draw this after we disable depth in GUI()
   cp5.setAutoDraw(false);
@@ -71,8 +79,10 @@ void nameList(int n) {
   //String selected = cp5.get(ScrollableList.class, "nameList").getItem(n).get("name").toString();
   println("Selected contributor: " + selected);
   showSingleContributor = true;
+  nameL.clear();
+  nameL.add(selected);
+  
   nl.setOpen(true);
-
 }
 
 /**
@@ -80,4 +90,9 @@ void nameList(int n) {
 **/
 public void controlEvent(CallbackEvent theEvent) {
   nl.setOpen(true);
+}
+
+void goToURL(){
+  link(profileURL);
+  profileButton.setOn();
 }

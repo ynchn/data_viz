@@ -114,6 +114,11 @@ void draw(){
   stroke(c0);
   line(0, 0, 0, 0, 0, 1000);
   
+  if (!showName){
+    profileButton.hide();
+    nameL.clear();
+  }
+  
   if (showSingleContributor && selectHighlight){
     // draw points of only the selected contributor
     for (HashMap.Entry<Triple, PatternCollection> e : patternMap.entrySet()) {
@@ -123,7 +128,12 @@ void draw(){
       if (!drawCurrPoint){
         continue;
       }
-      
+      if (showName){
+        profileURL = currCollection.getProfileURL(selected);
+        profileButton.setLabel("Go to " + selected + "'s Profile");
+        profileButton.getCaptionLabel().toUpperCase(false);
+        profileButton.show();
+      }
       // size correspond to the number of patterns the contributor upload at current point
       int sw = int(map(currCollection.getNameNumPairs().get(selected), 1, 200, 3, 30));
       strokeWeight(sw);
@@ -138,7 +148,7 @@ void draw(){
       float mouseCoordDistance = sq(mouseX - screenX(x, y, z)) + sq(mouseY - screenY(x, y, z));
       if (mouseCoordDistance < 30){
         // draw highlighted point when mouse position is close to a point
-        stroke(cyn, 95);
+        stroke(cyn, 229);
         point(x, y, z);
   
         prepFont();
@@ -153,7 +163,7 @@ void draw(){
       else{
         // calculate point color
         int sc = lerpColorAtTriple(x, y, z);
-        stroke(color(sc, 75));
+        stroke(color(sc, 192));
         // draw point
         point(x, y, z);
       }
@@ -188,7 +198,7 @@ void draw(){
           
           // draw highlighted point when mouse position is close to a point
           // point gets highlighted regardless if it's selected
-          stroke(cyn, 95);
+          stroke(cyn, 229);
           point(x, y, z);
           
           //prepFont();
@@ -204,7 +214,7 @@ void draw(){
         else{
           // calculate point color
           int sc = lerpColorAtTriple(x, y, z);
-          stroke(color(sc, 75));
+          stroke(color(sc, 192));
           // draw point
           point(x, y, z);
         }
@@ -228,7 +238,7 @@ void draw(){
         strokeWeight(sw);
         // ---------- selected/highlighted point ----------
         if (selectedCoord == k){
-          stroke(cyn, 95);
+          stroke(cyn, 229);
           point(x, y, z);
           
           //prepFont();
@@ -245,7 +255,7 @@ void draw(){
         else{
           // calculate point color
           int sc = lerpColorAtTriple(x, y, z);
-          stroke(color(sc, 75));
+          stroke(color(sc, 192));
           // draw point
           point(x, y, z);
         }

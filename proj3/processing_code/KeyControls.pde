@@ -64,14 +64,12 @@ void keyPressed() {
   
 }
 
-//void mouseClicked() {
-//  if (){
-//  }
-//}
 void mousePressed() {
   if (mousePressed && (mouseButton == RIGHT)) {
     selectHighlight = false;
     showSingleContributor = false;
+    selected = "";
     nameL.clear();
+    profileButton.hide();
   }
 }
