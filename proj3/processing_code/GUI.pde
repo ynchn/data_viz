@@ -1,4 +1,5 @@
-ScrollableList nl;
+public ScrollableList nl;
+public String selected;
 
 void setGUI(){
    PFont pfont = createFont("Georgia", 72, true);
@@ -13,14 +14,14 @@ void setGUI(){
    .getCaptionLabel().toUpperCase(false);
   
    cp5.addToggle("showName")
-   .setLabel("Show Contributors")
+   .setLabel("Contributors")
    .setPosition(30, 100)
    .setSize(50, 20)
    .setFont(font)
    .getCaptionLabel().toUpperCase(false);
   
    cp5.addToggle("showPreview")
-   .setLabel("Show Previews")
+   .setLabel("Previews")
    .setPosition(30, 160)
    .setSize(50, 20)
    .setFont(font)
@@ -46,12 +47,7 @@ void GUI(){
 }
 
 void setNameListGUI(){
-  //cp5.addScrollableList("nameList")
-  //.setLabel("Contributor List")
-  //.setPosition(1400, 30)
-  //.setSize(250, 400)
-  //.setBarHeight(30)
-  //.setItemHeight(30)
+
   PFont pfont = createFont("Georgia", 72, true);
   ControlFont font = new ControlFont(pfont, 14);
    
@@ -59,4 +55,29 @@ void setNameListGUI(){
   nl.getCaptionLabel().toUpperCase(false);
   nl.getValueLabel().toUpperCase(false);
   nl.setItems(nameL);
+  nl.setLabel("Contributor: # of Patterns");
+  nl.setOpen(true);
+}
+
+/**
+* nameList dropdown menu callback function
+**/
+void nameList(int n) {
+  selected = nl.getItem(n).get("name").toString();
+  
+  int idx = selected.indexOf(":");
+  selected = selected.substring(0, idx);
+  
+  //String selected = cp5.get(ScrollableList.class, "nameList").getItem(n).get("name").toString();
+  println("Selected contributor: " + selected);
+  showSingleContributor = true;
+  nl.setOpen(true);
+
+}
+
+/**
+* keep the scrollable list open
+**/
+public void controlEvent(CallbackEvent theEvent) {
+  nl.setOpen(true);
 }

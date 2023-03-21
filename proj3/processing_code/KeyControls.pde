@@ -71,5 +71,7 @@ void keyPressed() {
 void mousePressed() {
   if (mousePressed && (mouseButton == RIGHT)) {
     selectHighlight = false;
+    showSingleContributor = false;
+    nameL.clear();
   }
 }

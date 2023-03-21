@@ -37,6 +37,7 @@ color highlightColor = cyn;
 boolean showName = true;
 boolean showPreview = false;
 ArrayList<String> nameL = new ArrayList<String>();
+boolean showSingleContributor = false;
 
 // mouse press control
 boolean selectHighlight = false;
@@ -113,40 +114,36 @@ void draw(){
   stroke(c0);
   line(0, 0, 0, 0, 0, 1000);
   
-  if (!selectHighlight){
-    
+  if (showSingleContributor && selectHighlight){
+    // draw points of only the selected contributor
     for (HashMap.Entry<Triple, PatternCollection> e : patternMap.entrySet()) {
+      // check current collection if it's a point containing selected contributor
+      PatternCollection currCollection = e.getValue();
+      boolean drawCurrPoint = currCollection.getNameNumPairs().containsKey(selected);
+      if (!drawCurrPoint){
+        continue;
+      }
+      
+      // size correspond to the number of patterns the contributor upload at current point
+      int sw = int(map(currCollection.getNameNumPairs().get(selected), 1, 200, 3, 30));
+      strokeWeight(sw);
+      
+      // get coordinates
       Triple k = e.getKey();
       float x = map(k.getXCoord(), 3, 64, 1, 1000);
       float y = map(k.getYCoord(), -26, -1, -1000, -1);
       float z = map(k.getZCoord(), 2, 200, 1, 1000);
-      
-      // calculate point size
-      PatternCollection currCollection = e.getValue();
-      int sw = int(map(currCollection.getSize(), 1, 200, 3, 30));
-      strokeWeight(sw);
       
       // ---------- highlight point ----------
       float mouseCoordDistance = sq(mouseX - screenX(x, y, z)) + sq(mouseY - screenY(x, y, z));
       if (mouseCoordDistance < 30){
-        // select/highlight one point by pressing right mouse button
-        if (mousePressed && (mouseButton == RIGHT)) {
-          if (!selectHighlight){
-            selectHighlight = true;
-          }
-          selectedCoord = k;
-          //break;
-        }
-        
         // draw highlighted point when mouse position is close to a point
-        // point gets highlighted regardless if it's selected
         stroke(cyn, 95);
         point(x, y, z);
-        
-        prepFont();
   
+        prepFont();
         if (showName){
-          nameL = showNameAtPoint(x, y, z, currCollection);
+          nameL = showNameAtPoint(x, y, z, currCollection, showSingleContributor);
         }
   
         if (showPreview){
@@ -160,53 +157,106 @@ void draw(){
         // draw point
         point(x, y, z);
       }
-      // -------------------------------------
-      
-    }// end normal loop
-  
+    }
   }
   else{
-    // selected highlight point at coordinate `selectedCoord`
-    for (HashMap.Entry<Triple, PatternCollection> e : patternMap.entrySet()) {
-      Triple k = e.getKey();
+  
+    if (!selectHighlight){
       
-      float x = map(k.getXCoord(), 3, 64, 1, 1000);
-      float y = map(k.getYCoord(), -26, -1, -1000, -1);
-      float z = map(k.getZCoord(), 2, 200, 1, 1000);
-      
-      // calculate point size
-      PatternCollection currCollection = e.getValue();
-      int sw = int(map(currCollection.getSize(), 1, 200, 3, 30));
-      strokeWeight(sw);
-      // ---------- selected/highlighted point ----------
-      if (selectedCoord == k){
-        stroke(cyn, 95);
-        point(x, y, z);
+      for (HashMap.Entry<Triple, PatternCollection> e : patternMap.entrySet()) {
+        Triple k = e.getKey();
+        float x = map(k.getXCoord(), 3, 64, 1, 1000);
+        float y = map(k.getYCoord(), -26, -1, -1000, -1);
+        float z = map(k.getZCoord(), 2, 200, 1, 1000);
         
-        prepFont();
-  
-        if (showName){
-          nameL = showNameAtPoint(x, y, z, currCollection);
-        }
-  
-        if (showPreview){
-          showPreviewAtPoint(currCollection);
-        }
-      // ------------------------------------------------
-      }
-      else{
-        // calculate point color
-        int sc = lerpColorAtTriple(x, y, z);
-        stroke(color(sc, 75));
-        // draw point
-        point(x, y, z);
-      }
-      
-
-      
-
-    }// end normal loop
+        // calculate point size
+        PatternCollection currCollection = e.getValue();
+        int sw = int(map(currCollection.getSize(), 1, 200, 3, 30));
+        strokeWeight(sw);
+        
+        // ---------- highlight point ----------
+        float mouseCoordDistance = sq(mouseX - screenX(x, y, z)) + sq(mouseY - screenY(x, y, z));
+        if (mouseCoordDistance < 30){
+          // select/highlight one point by pressing right mouse button
+          if (mousePressed && (mouseButton == LEFT)) {
+            if (!selectHighlight){
+              selectHighlight = true;
+            }
+            selectedCoord = k;
+            //break;
+          }
+          
+          // draw highlighted point when mouse position is close to a point
+          // point gets highlighted regardless if it's selected
+          stroke(cyn, 95);
+          point(x, y, z);
+          
+          //prepFont();
     
+          if (showName){
+            nameL = showNameAtPoint(x, y, z, currCollection, showSingleContributor);
+          }
+    
+          if (showPreview){
+            showPreviewAtPoint(currCollection);
+          }
+        }
+        else{
+          // calculate point color
+          int sc = lerpColorAtTriple(x, y, z);
+          stroke(color(sc, 75));
+          // draw point
+          point(x, y, z);
+        }
+        // -------------------------------------
+        
+      }// end normal loop
+    
+    }
+    else{
+      // selected highlight point at coordinate `selectedCoord`
+      for (HashMap.Entry<Triple, PatternCollection> e : patternMap.entrySet()) {
+        Triple k = e.getKey();
+        
+        float x = map(k.getXCoord(), 3, 64, 1, 1000);
+        float y = map(k.getYCoord(), -26, -1, -1000, -1);
+        float z = map(k.getZCoord(), 2, 200, 1, 1000);
+        
+        // calculate point size
+        PatternCollection currCollection = e.getValue();
+        int sw = int(map(currCollection.getSize(), 1, 200, 3, 30));
+        strokeWeight(sw);
+        // ---------- selected/highlighted point ----------
+        if (selectedCoord == k){
+          stroke(cyn, 95);
+          point(x, y, z);
+          
+          //prepFont();
+    
+          if (showName){
+            nameL = showNameAtPoint(x, y, z, currCollection, showSingleContributor);
+          }
+    
+          if (showPreview){
+            showPreviewAtPoint(currCollection);
+          }
+        // ------------------------------------------------
+        }
+        else{
+          // calculate point color
+          int sc = lerpColorAtTriple(x, y, z);
+          stroke(color(sc, 75));
+          // draw point
+          point(x, y, z);
+        }
+        
+  
+        
+  
+      }// end normal loop
+      
+    }
+  
   }
   setNameListGUI();
   
@@ -296,24 +346,31 @@ void prepFont(){
   fill(color(cyn));
   textMode(SHAPE);
   textFont(axisLabelFont);
-  if (cam.getDistance() < 250){
-    textSize(24);
+  if (cam.getDistance() < 100){
+    textSize(16);
   }
   else{
-    textSize(32);
+    textSize(12);
   }
 }
 
-ArrayList<String> showNameAtPoint(float x, float y, float z, PatternCollection currCollection){
-  //float pos = y;
+ArrayList<String> showNameAtPoint(float x, float y, float z, PatternCollection currCollection, boolean showSingleContributor){
   ArrayList<String> nameL = new ArrayList<String>();
   HashMap<String, Integer> name_num = currCollection.getNameNumPairs();
   for (String name : name_num.keySet()){
+
+    if (showSingleContributor && (!name.equals(selected))){
+      continue;
+    }
+    
     int num = name_num.get(name);
     String concat = name + ": " + num;
     nameL.add(concat);
-    //text(concat, x, pos, z);
-    //pos += 40;
+
+    if (showSingleContributor){
+      text(num, x, y, z);
+    }
+    
   }
   return nameL;
 }
