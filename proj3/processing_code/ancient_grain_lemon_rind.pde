@@ -351,12 +351,7 @@ void prepFont(){
   fill(color(cyn));
   textMode(SHAPE);
   textFont(axisLabelFont);
-  if (cam.getDistance() < 100){
-    textSize(16);
-  }
-  else{
-    textSize(12);
-  }
+  textSize(16);
 }
 
 ArrayList<String> showNameAtPoint(float x, float y, float z, PatternCollection currCollection, boolean showSingleContributor){
@@ -397,6 +392,10 @@ void showPreviewAtPoint(PatternCollection currCollection, boolean showSingleCont
       singleContributorPreviews.add(p.getPreviewURL());
     }
     idx = int(random(singleContributorPreviews.size()));
+    if (singleContributorPreviews.size() == 0){
+      println(selected + ": ", singleContributorPreviews.size());
+      return;
+    }
     url = singleContributorPreviews.get(idx);
     img = loadImage(url);
   }
