@@ -1,5 +1,5 @@
 /**
- * TODO: map to GUI
+ * key control functions
  */
 import java.awt.event.KeyEvent;
 boolean isLooping = true;
@@ -64,6 +64,11 @@ void keyPressed() {
   
 }
 
+/**
+* mouse right click function
+* dis-selected highlighted point, dis-select single contributor
+* clear nameL ArrayList, clear the dropdown menu
+**/
 void mousePressed() {
   if (mousePressed && (mouseButton == RIGHT)) {
     selectHighlight = false;

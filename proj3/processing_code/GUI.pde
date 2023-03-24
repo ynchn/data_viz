@@ -6,7 +6,8 @@ public String selected;
 public String profileURL = "https://www.braceletbook.com/";
 
 void setGUI(){
-   PFont pfont = createFont("Georgia", 72, true);
+   //PFont pfont = createFont("Georgia", 72, true);
+   PFont pfont = createFont("Futura", 72, true);
    ControlFont font = new ControlFont(pfont, 14);
    textMode(SHAPE);
 
@@ -100,8 +101,13 @@ void GUI(){
   hint(ENABLE_DEPTH_TEST);
 }
 
+/**
+* the top bar of the dropdown menu
+* display "Contributor: # of Patterns"
+**/
 void setNameListGUI(){
-  PFont pfont = createFont("Georgia", 72, true);
+  //PFont pfont = createFont("Georgia", 72, true);
+  PFont pfont = createFont("Futura", 72, true);  
   ControlFont font = new ControlFont(pfont, 14);
    
   nl.setFont(font);
@@ -114,6 +120,8 @@ void setNameListGUI(){
 
 /**
 * nameList dropdown menu callback function
+* clear the nameL ArrayList, add only the selected contributor to the list
+* so that the dropdown menu only show information of selected contributor
 **/
 void nameList(int n) {
   selected = nl.getItem(n).get("name").toString();
@@ -131,17 +139,18 @@ void nameList(int n) {
 }
 
 /**
-* keep the scrollable list open
+* gotoURL callback function
+* link to the selected contributor's profile webpage
 **/
-public void controlEvent(CallbackEvent theEvent) {
-  nl.setOpen(true);
-}
-
 void goToURL(){
   link(profileURL);
   profileButton.setOn();
 }
 
+/**
+* showUsage callback function
+* turn on/off usage information in the GUI
+**/
 void showUsage(){
   if (!b_showUsage){
     t.show();

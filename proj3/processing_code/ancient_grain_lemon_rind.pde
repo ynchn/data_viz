@@ -1,3 +1,25 @@
+/**
+* Mat 259 Project 3
+* "User-created friendship bracelet patterns on BraceletBook.com"
+*
+* A 3D interactive demo that uses peasycam and controlP5, created in Processing 4.1.2
+*
+* Date: March 24, 2023
+* Author: Yanchen Lu
+* Instructor: George Legrady
+* 
+* Usage:
+* - GUI:
+*   - Left click to select a point. Selectable points near mouse position will be highlighted.
+*   - Selected a contributor from the dropdown menu. This filters the data by contributor name.
+*     - You can see how many patterns with dimensions `(num_strings, num_colors, length) this selected contributor has uploaded.
+*     - There is also a button linked to the contributor's profile page. Clicking the button opens the link in your browser.
+*   - Right click to exit filter, or to reset the dropdown menu.
+*   - The Contributors button toggles on/off the dropdown menu and its associated functions.
+*   - The Previews button toggles on/off preview image display. One preview image is selected randomly per frame with dimensions
+*     `(num_strings, num_colors, length) at the coordinate the mouse is pointing at.
+**/
+
 import java.util.*;
 import java.lang.Math;
 import peasy.*;
@@ -64,7 +86,8 @@ void setup(){
   cp5 = new ControlP5(this);
   setGUI();
   
-  axisLabelFont = createFont("Georgia", 32, true);
+  //axisLabelFont = createFont("Georgia", 32, true);
+  axisLabelFont = createFont("Futura", 32, true);
   
   // load data
   table = loadTable("patterns.csv", "header");
@@ -111,9 +134,13 @@ void draw(){
   
   if (!showName){
     profileButton.hide();
+    nl.hide();
     nameL.clear();
   }
-  
+  else{
+    nl.show();
+  }
+    
   if (showSingleContributor && selectHighlight){
     // draw points of only the selected contributor
     for (HashMap.Entry<Triple, PatternCollection> e : patternMap.entrySet()) {
@@ -215,7 +242,7 @@ void draw(){
         }
         // -------------------------------------
         
-      }// end normal loop
+      }
     
     }
     else{
@@ -258,7 +285,7 @@ void draw(){
   
         
   
-      }// end normal loop
+      }
       
     }
   
@@ -286,6 +313,9 @@ void draw(){
 
 
 // ----------------------------------------------------------------------------------------------------
+/**
+* linear interpolation to calculate the color of each point
+**/
 int lerpColorAtTriple(float x, float y, float z){
   // pt -> x-axis
   float to_x = sqrt(sq(y) + sq(z));
@@ -300,6 +330,9 @@ int lerpColorAtTriple(float x, float y, float z){
   return lerpXYZ;
 }
 
+/**
+* draw labels for the x/y/z-axis
+**/
 void drawAxisLabels(int axis){
   // x: axis == 0
   if (axis == 0){
@@ -347,6 +380,9 @@ void drawAxisLabels(int axis){
   }
 }
 
+/**
+* set the font and size for the number display at each point of the single contributor view
+**/
 void prepFont(){
   fill(color(cyn));
   textMode(SHAPE);
@@ -354,6 +390,11 @@ void prepFont(){
   textSize(16);
 }
 
+/**
+* prepare the nameL ArrayList for showing contributor at mouse selected point in the dropdown menu
+* support both single contributor view and all data point view
+* display the number of patterns at a point in the single contributor view
+**/
 ArrayList<String> showNameAtPoint(float x, float y, float z, PatternCollection currCollection, boolean showSingleContributor){
   ArrayList<String> nameL = new ArrayList<String>();
   HashMap<String, Integer> name_num = currCollection.getNameNumPairs();
@@ -375,6 +416,9 @@ ArrayList<String> showNameAtPoint(float x, float y, float z, PatternCollection c
   return nameL;
 }
 
+/**
+* display one randomly selected pattern per frame (aka per call to this function)
+**/
 void showPreviewAtPoint(PatternCollection currCollection, boolean showSingleContributor){
   ArrayList<Pattern> patterns = currCollection.getPatternList();
   
